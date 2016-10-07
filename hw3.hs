@@ -1,27 +1,18 @@
 import Data.List (sort)
 
 -- EX 1
-skipN :: [a] -> Int -> [a] -> Int -> [a]
-skipN [] _ aux _ = reverse aux
-skipN (h:t) 1 aux k = skipN t k (h:aux) k
-skipN (h:t) m aux k = skipN t (m-1) aux k
-
-countDown :: [a] -> Int -> [[a]] -> [[a]]
-countDown s 0 aux = aux
-countDown s k aux = countDown s (k-1) ((skipN s k [] k):aux)
-
 skips :: [a] -> [[a]]
-skips s = countDown s (length s) []
+skips s = [skipN i s | i <- [1 .. length s]]
+
+skipN :: Int -> [a] -> [a]
+skipN n s = [s!!(i*n) | i <- [1 .. length s]] 
 
 -- EX 2
-localMaxima1 :: [Integer] -> [Integer] -> [Integer]
-localMaxima1 (l1:h:l2:rest) aux
-    | l1 < h && h > l2 = localMaxima1 (h:l2:rest) (h:aux)
-    | otherwise        = localMaxima1 (h:l2:rest) aux
-localMaxima1 _ aux = reverse aux
-
 localMaxima :: [Integer] -> [Integer]
-localMaxima s = localMaxima1 s []
+localMaxima (l1:rest@(h:l2:_))
+    | l1 < h && h > l2 = h:(localMaxima rest)
+    | otherwise        = localMaxima rest
+localMaxima _ = []
 
 -- EX 3
 classify :: [Integer] -> Integer -> [(Integer, Integer)]
